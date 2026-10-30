@@ -1,0 +1,91 @@
+@keyframes conveyor {
+            0% { transform: translateX(-320px); }
+            100% { transform: translateX(100vw); }
+        }
+        .conveyor-animation {
+            animation: conveyor 15s linear forwards;
+        }
+        .shake {
+            animation: shake 0.2s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+        @keyframes plate-bounce {
+            0%, 100% { transform: translateY(0); }
+            35% { transform: translateY(-7px); }
+        }
+        .plate-bounce {
+            animation: plate-bounce 0.18s ease-out;
+        }
+        .wood-bg {
+            background-color: #5c3214;
+            background-image: linear-gradient(0deg, rgba(0,0,0,0.2) 50%, transparent 50%);
+            background-size: 100% 8px;
+        }
+        .wood-background {
+            background-color: #ad8056;
+            background-image:
+                repeating-linear-gradient(0deg, rgba(74, 42, 19, 0.12) 0 1px, transparent 1px 5px),
+                repeating-linear-gradient(0deg, transparent 0 32px, rgba(255, 232, 196, 0.16) 33px, transparent 36px 72px),
+                linear-gradient(90deg, #a8794e 0%, #c19668 24%, #ad8056 51%, #c49a6c 76%, #a8794e 100%);
+            background-size: 100% 100%, 100% 140px, 100% 100%;
+        }
+        body.title-screen {
+            background-color: #858889;
+            background-image:
+                radial-gradient(ellipse at 18% 22%, rgba(245, 246, 241, 0.16), transparent 35%),
+                radial-gradient(ellipse at 78% 72%, rgba(43, 48, 49, 0.12), transparent 42%),
+                radial-gradient(rgba(35, 40, 41, 0.18) 0.7px, transparent 1px),
+                linear-gradient(135deg, #96999a, #777b7c 48%, #898d8e);
+            background-size: 100% 100%, 100% 100%, 7px 7px, 100% 100%;
+            background-attachment: fixed;
+        }
+        body.title-screen header,
+        body.title-screen main {
+            background: transparent;
+        }
+        body.title-screen header {
+            border-color: transparent;
+            box-shadow: none;
+        }
+        body.title-screen #dashboard,
+        body.title-screen #conveyor-lane {
+            display: none;
+        }
+        body.title-screen #word-display {
+            display: none;
+        }
+        body.title-screen #view-game {
+            justify-content: center;
+        }
+        body.title-screen #typing-card {
+            min-height: 0;
+            padding: 0;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+        }
+        body.title-screen #start-overlay {
+            position: relative;
+            inset: auto;
+            padding: 1.5rem;
+        }
+        #result-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            border-radius: 0;
+            justify-content: flex-start;
+        }
+        @media (min-height: 700px) {
+            #result-overlay {
+                justify-content: center;
+            }
+        }
+        ruby rt {
+            font-size: 0.6em;
+            color: #fbbf24;
+        }

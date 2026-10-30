@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高校生物 タイピング寿司</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="title-screen bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans select-none overflow-x-hidden">
+
+    <header class="bg-slate-900 border-b border-slate-800 p-2 shadow-lg z-30">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">🍣</span>
+                <h1 class="font-bold text-lg text-amber-400">生物 タイピング寿司</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 flex flex-col relative overflow-hidden wood-background">
+        
+        <section id="view-game" class="flex-1 flex flex-col justify-between items-center relative w-full h-full p-4 max-w-5xl mx-auto">
+            
+            <!-- Dashboard Bar -->
+            <div id="dashboard" class="w-full bg-slate-900/95 border border-slate-800 rounded-xl p-4 shadow-xl backdrop-blur-md z-20">
+                <div class="flex justify-between items-center gap-4">
+                    <div class="flex items-center gap-6">
+                        <div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">残り時間</div>
+                            <div class="text-3xl font-extrabold text-amber-400"><span id="timer-display">180</span><span class="text-sm font-normal text-slate-400 ml-1">秒</span></div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">獲得皿数</div>
+                            <div class="text-3xl font-extrabold text-emerald-400"><span id="plates-count">0</span> <span class="text-sm text-slate-400 font-normal">皿</span></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div>
+                            <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">スコア</div>
+                            <div class="text-3xl font-extrabold text-sky-400" id="score-display">0</div>
+                        </div>
+                        <div class="hidden sm:block">
+                            <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">正確率</div>
+                            <div class="text-2xl font-bold text-slate-200" id="accuracy-display">100%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="flex justify-between items-center gap-2 text-xs mb-1">
+                        <span class="font-semibold text-amber-300">連続入力ボーナス</span>
+                        <span class="text-slate-300"><span id="streak-display">0 / 25</span>回 <span id="bonus-next-display" class="text-amber-300">次: +1秒</span></span>
+                    </div>
+                    <div id="streak-meter" role="meter" aria-label="連続入力ボーナスの進捗" aria-valuemin="0" aria-valuemax="25" aria-valuenow="0" class="h-2.5 w-full overflow-hidden rounded-full bg-slate-700">
+                        <div id="streak-progress" class="h-full rounded-full bg-gradient-to-r from-emerald-500 to-amber-400 transition-all duration-150" style="width: 0%"></div>
+                    </div>
+                    <div class="mt-1 text-[10px] text-slate-400">25回:+1秒 / 50回:+2秒 / 75回:+3秒 / 以降くり返し（ミスでリセット）</div>
+                </div>
+            </div>
+
+            <!-- Conveyor Belt Animation View -->
+            <div id="conveyor-lane" class="w-full relative h-36 my-2 overflow-hidden rounded-xl border-2 border-amber-950/80 wood-bg shadow-2xl flex items-center">
+                <div class="absolute w-full h-5 bg-slate-800/90 bottom-2 border-y border-slate-700"></div>
+                
+                <div id="conveyor-belt" class="absolute w-full h-full top-0 left-0 pointer-events-none hidden">
+                    <div id="sushi-plate" class="absolute w-52 h-32 left-0 top-1">
+                        <div id="sushi-bounce" class="flex h-full w-full flex-col items-center justify-center">
+                            <div class="relative w-28 h-12 flex items-center justify-center -mb-2 z-10 drop-shadow-lg">
+                                <div class="absolute bottom-0 w-24 h-7 bg-slate-100 rounded-b-xl border-2 border-slate-300"></div>
+                                <svg id="sushi-svg" class="w-20 h-10 z-10 filter drop-shadow" viewBox="0 0 100 50">
+                                    <path d="M 10 25 Q 25 5, 40 25 T 70 25 T 100 25" fill="none" stroke="#ef4444" stroke-width="4"/>
+                                    <path d="M 10 25 Q 25 45, 40 25 T 70 25 T 100 25" fill="none" stroke="#3b82f6" stroke-width="4"/>
+                                    <circle cx="25" cy="15" r="3" fill="#fbbf24"/>
+                                    <circle cx="55" cy="35" r="3" fill="#10b981"/>
+                                </svg>
+                            </div>
+                            <div class="bg-gradient-to-r from-red-600 via-rose-500 to-red-700 rounded-full w-40 h-8 border-4 border-amber-300 shadow-2xl flex items-center justify-center">
+                                <div class="w-32 h-5 border border-red-300/50 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="belt-guide" class="w-full text-center text-amber-200/90 text-sm italic font-medium z-10">
+                    🍣 お皿が右へ流れて画面外に消える前にタイピングしてください！
+                </div>
+            </div>
+
+            <div id="typing-card" class="w-full max-w-3xl bg-slate-900/95 border-2 border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl relative z-20 flex flex-col items-center justify-center min-h-[250px]">
+                <div id="next-word-preview" class="absolute left-4 top-3 z-10 hidden text-left" aria-label="次に出る単語">
+                    <div class="text-[10px] font-semibold text-slate-400">つぎの単語</div>
+                    <div id="next-word-text" class="text-sm font-bold text-amber-300"></div>
+                </div>
+                
+                <!-- START OVERLAY -->
+                <div id="start-overlay" class="absolute inset-0 rounded-2xl z-30 flex flex-col items-center justify-center p-6 text-center">
+                    <div class="text-4xl mb-1">🍣 🧬</div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-amber-400 mb-2">高校生物 タイピング寿司</h2>
+                    <p class="text-slate-100 text-sm mb-5 max-w-lg leading-relaxed">
+                        <span class="font-bold text-amber-200">ルール</span><br>
+                        生物基礎の言葉をローマ字入力。お皿が流れ切る前に入力すると獲得できます。<br>
+                        ミスなしで入力するとボーナス秒が加算。<br>
+                        プレイ中は Escape キーでタイトルに戻れます。
+                    </p>
+
+                    <div class="mb-5 flex flex-col items-center gap-2">
+                        <label class="text-xs text-amber-300 font-bold uppercase tracking-wider">読みの文字数</label>
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <button onclick="setQuestionGroup('5-8')" id="group-btn-5-8" class="group-select-btn px-3 py-2 rounded-lg font-bold text-sm bg-amber-500 border border-amber-400 text-slate-950 shadow-md transition-all">5〜8文字</button>
+                            <button onclick="setQuestionGroup('9-12')" id="group-btn-9-12" class="group-select-btn px-3 py-2 rounded-lg font-bold text-sm bg-slate-800 border border-slate-700 text-slate-300 hover:border-amber-400 transition-all">9〜12文字</button>
+                            <button onclick="setQuestionGroup('13-16')" id="group-btn-13-16" class="group-select-btn px-3 py-2 rounded-lg font-bold text-sm bg-slate-800 border border-slate-700 text-slate-300 hover:border-amber-400 transition-all">13〜16文字</button>
+                            <button onclick="setQuestionGroup('17-20')" id="group-btn-17-20" class="group-select-btn px-3 py-2 rounded-lg font-bold text-sm bg-slate-800 border border-slate-700 text-slate-300 hover:border-amber-400 transition-all">17〜20文字</button>
+                        </div>
+                    </div>
+
+                    <!-- Time Selection Buttons -->
+                    <div class="mb-6 flex flex-col items-center gap-2">
+                        <label class="text-xs text-amber-300 font-bold uppercase tracking-wider">制限時間の選択</label>
+                        <div class="flex gap-2">
+                            <button onclick="setGameTime(60)" id="time-btn-60" class="time-select-btn px-4 py-2 rounded-lg font-bold text-sm bg-slate-800 border border-slate-700 text-slate-300 hover:border-amber-400 transition-all">60秒</button>
+                            <button onclick="setGameTime(120)" id="time-btn-120" class="time-select-btn px-4 py-2 rounded-lg font-bold text-sm bg-slate-800 border border-slate-700 text-slate-300 hover:border-amber-400 transition-all">120秒</button>
+                            <button onclick="setGameTime(180)" id="time-btn-180" class="time-select-btn px-4 py-2 rounded-lg font-bold text-sm bg-amber-500 border border-amber-400 text-slate-950 shadow-md transition-all">180秒</button>
+                        </div>
+                    </div>
+
+                    <button id="start-button" disabled onclick="startGame()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-10 py-3.5 rounded-full text-lg shadow-xl hover:shadow-amber-500/30 hover:scale-105 transition-all cursor-pointer">
+                        スタート (Space)
+                    </button>
+                    <p id="question-load-status" role="status" class="text-xs text-slate-400 mt-3"></p>
+                </div>
+
+                <!-- RESULT OVERLAY -->
+                <div id="result-overlay" class="absolute inset-0 bg-slate-950/98 backdrop-blur-md rounded-2xl z-40 flex flex-col items-center justify-center p-6 text-center hidden overflow-y-auto">
+                    <div class="text-amber-400 text-xs font-bold tracking-widest uppercase mb-1">Time's Up!</div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-white mb-3">結果発表</h2>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-lg bg-slate-900/90 p-4 rounded-xl border border-slate-800 mb-4 text-left text-xs sm:text-sm">
+                        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                            <div class="text-slate-400 text-[11px]">総合スコア</div>
+                            <div class="text-xl font-extrabold text-sky-400"><span id="res-score">0</span> <span class="text-xs font-normal">pt</span></div>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                            <div class="text-slate-400 text-[11px]">獲得皿数</div>
+                            <div class="text-xl font-extrabold text-emerald-400"><span id="res-plates">0</span> <span class="text-xs font-normal">皿</span></div>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                            <div class="text-slate-400 text-[11px]">平均タイプ数</div>
+                            <div class="text-xl font-extrabold text-amber-300"><span id="res-kps">0.0</span> <span class="text-xs font-normal">回/秒</span></div>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                            <div class="text-slate-400 text-[11px]">正打数</div>
+                            <div class="text-lg font-bold text-slate-100"><span id="res-keys">0</span> <span class="text-xs font-normal">回</span></div>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                            <div class="text-slate-400 text-[11px]">ミスタイプ</div>
+                            <div class="text-lg font-bold text-rose-400"><span id="res-misses">0</span> <span class="text-xs font-normal">回</span></div>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-lg border border-slate-800/80">
+                            <div class="text-slate-400 text-[11px]">正確率</div>
+                            <div class="text-lg font-bold text-teal-300" id="res-accuracy">100%</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-5 bg-amber-500/10 border border-amber-500/30 px-6 py-2.5 rounded-xl flex items-center justify-center gap-3">
+                        <span class="text-slate-300 text-sm font-semibold">評価番付:</span>
+                        <span id="res-rank" class="text-2xl sm:text-3xl font-black text-amber-400">横綱 👑</span>
+                    </div>
+
+                    <button onclick="resetToTitle()" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-8 py-3 rounded-full text-base shadow-lg hover:shadow-emerald-500/30 hover:scale-105 transition-all cursor-pointer">
+                        もう一度遊ぶ (タイトルへ)
+                    </button>
+                </div>
+
+                <!-- Word Display Container with Kanji Rubies -->
+                <div id="word-display" class="w-full text-center flex flex-col items-center justify-center space-y-3">
+                    <div id="kanji-display" class="text-2xl sm:text-3xl font-bold text-slate-100 tracking-wide min-h-[44px]"></div>
+
+                    <div id="roma-display" class="text-base sm:text-xl font-mono tracking-wider font-semibold bg-slate-950 px-4 py-2.5 rounded-xl border border-slate-800 w-full overflow-x-auto whitespace-nowrap shadow-inner">
+                        <span id="roma-typed" class="text-emerald-400"></span><span id="roma-untyped" class="text-slate-400"></span>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script src="game.js"></script>
+</body>
+</html>
